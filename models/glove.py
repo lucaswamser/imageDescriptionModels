@@ -1,7 +1,8 @@
-from tensorflow import tf
+import tensorflow as tf
 import os
 import shutil
 import numpy as np
+
 class GloveEmbeddingMatrix():
      def __init__(self,download_path,dataset,embedding_dim=200) -> None:
         self.download_path = download_path
