@@ -1,6 +1,7 @@
 import keras
 from models.model import Model
-from tensorflow import tf
+import numpy as np
+import tensorflow as tf
 
 class LTSMModel(Model):
 
