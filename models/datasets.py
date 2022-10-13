@@ -187,6 +187,7 @@ class Flickr8kDataset(Dataset):
         train = list(self.load_set(filename))
 
         self.train_descriptions = self.load_clean_descriptions(os.path.join(self.download_path,'descriptions.txt'), train)
+        self.descriptions = descriptions
         #print('Descriptions: train=%d' % len(train_descriptions))
         #print(list(train_descriptions)[:10])
         self._load_images_names()
