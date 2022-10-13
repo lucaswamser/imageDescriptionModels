@@ -147,6 +147,7 @@ class Flickr8kDataset(Dataset):
           self.encoding_train = pickle.load(open(out_encoded_train_file, "rb"))
           self.encoding_test = pickle.load(open(out_encoded_test_file, "rb"))
         else:
+          self._download_images()
           image_model = InceptionV3(include_top=False,weights='imagenet')
           new_input = image_model.input
           hidden_layer = image_model.layers[-1].output
@@ -262,4 +263,3 @@ class Flickr8kDataset(Dataset):
 
     def _download(self):
         self._download_text()
-        self._download_images()
