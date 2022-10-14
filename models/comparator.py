@@ -9,7 +9,7 @@ class Comparator(object):
         self._calculate()
 
     def _calculate(self):
-        BLEUscore = nltk.translate.bleu_score.sentence_bleu([self.ori], self.ref)
+        BLEUscore = nltk.translate.meteor_score.sentence_bleu([self.ori], self.ref)
         self.score = BLEUscore
 
 if __name__ == "__main__":
