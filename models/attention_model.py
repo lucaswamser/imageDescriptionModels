@@ -129,16 +129,24 @@ class AttentionModel(Model):
             self.optimizer.apply_gradients(zip(gradients, trainable_variables))
 
             return loss, total_loss
-        
+
+          loss_plot = []
+          num_steps = len(dataset.train_descriptions) // batch_size
           generator = self._data_generator(dataset.train_descriptions, dataset.encoding_train, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
           #print(max_length)
           for i,g in enumerate(generator):
             if i > epochs:
               break;
-            loss, total_loss = train_step(g[0],g[1])
+            batch_loss, total_loss = train_step(g[0],g[1])
+            loss_plot.append(total_loss / num_steps)
+            
             if (i % 100 == 0):
-              print(i)
-              print(total_loss)
+              average_batch_loss = batch_loss.numpy()/batch_size
+              print(f'Epoch {i+1} Loss {average_batch_loss:.4f}')
+              #print(i)
+              #print(total_loss)
+          
+          return loss_plot
             
     def predict(self,img_tensor_val):
             attention_plot = np.zeros((self.max_length, 64))
