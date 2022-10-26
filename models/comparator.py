@@ -32,20 +32,33 @@ class ComparatorAll(object):
         nltk.download('omw-1.4')
 
     def _calculate_rouge(self,ori,ref):
-        scores = self.rouge.get_scores(ori, ref)
-        self.rouge1_scores.append(scores[0]["rouge-1"]["r"])
-        self.rouge2_scores.append(scores[0]["rouge-2"]["r"])
-        self.rougel_scores.append(scores[0]["rouge-l"]["r"])
+        rouge1_score = 1000
+        rouge2_score = 1000
+        rougel_score = 1000
+        for o in ori:
+            scores = self.rouge.get_scores(o, ref)
+            if (scores[0]["rouge-1"]["r"] < rouge1_score):
+                rouge1_score = (scores[0]["rouge-1"]["r"])
+            if (scores[0]["rouge-2"]["r"] < rouge2_score):
+                rouge2_score = (scores[0]["rouge-2"]["r"])
+            if (scores[0]["rouge-l"]["r"] < rougel_score):
+                rougel_score = (scores[0]["rouge-l"]["r"])
+
+        #scores = self.rouge.get_scores(ori, ref)
+        self.rouge1_scores.append(rouge1_score)
+        self.rouge2_scores.append(rouge2_score)
+        self.rougel_scores.append(rougel_score)
+
     def _calculate_meteor(self,ori,ref):
-        meteor_score = nltk.translate.meteor_score.single_meteor_score(ori,ref)
+        meteor_score = nltk.translate.meteor_score.meteor_score(ori,ref)
         self.meteor_scores.append(meteor_score)
 
     def _calculate_bleu(self,ori,ref):
-        BLEUscore = nltk.translate.bleu_score.sentence_bleu([ori], ref)
+        BLEUscore = nltk.translate.bleu_score.sentence_bleu(ori, ref)
         self.bleu_scores.append(BLEUscore)
 
     def add_comparation(self,ori,ref):
-       ori_split = ori.split(" ")
+       ori_split = [o.split(" ") for o in ori]
        ref_split = ref.split(" ")
        self._calculate_bleu(ori_split,ref_split)
        self._calculate_meteor(ori_split,ref_split)
@@ -65,8 +78,8 @@ class ComparatorAll(object):
 if __name__ == "__main__":
 
     comparator_all = ComparatorAll()
-    comparator_all.add_comparation("hello i am polo", "hello i am lucas")
-    comparator_all.add_comparation("hello", "hello i am lucas")
+    comparator_all.add_comparation(["hello i do something"], "hello i am lucas")
+    comparator_all.add_comparation(["hello","sdasds"], "hello i am lucas")
     comparator_all.print_summary()
 
 
