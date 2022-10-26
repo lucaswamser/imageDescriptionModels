@@ -1,5 +1,6 @@
 import nltk
-
+from rouge import Rouge 
+from statistics import mean
 
 class Comparator(object):
 
@@ -15,3 +16,58 @@ class Comparator(object):
 if __name__ == "__main__":
 
     print(Comparator("oii tudo", "oii tudo").score)
+
+
+
+class ComparatorAll(object):
+
+    def __init__(self) -> None:
+        self.meteor_scores=[]
+        self.bleu_scores=[]
+        self.rouge1_scores=[]
+        self.rouge2_scores=[]
+        self.rougel_scores=[]
+        self.rouge = Rouge()
+        nltk.download('wordnet')
+        nltk.download('omw-1.4')
+
+    def _calculate_rouge(self,ori,ref):
+        scores = self.rouge.get_scores(ori, ref)
+        self.rouge1_scores.append(scores[0]["rouge-1"]["r"])
+        self.rouge2_scores.append(scores[0]["rouge-2"]["r"])
+        self.rougel_scores.append(scores[0]["rouge-l"]["r"])
+    def _calculate_meteor(self,ori,ref):
+        meteor_score = nltk.translate.meteor_score.single_meteor_score(ori,ref)
+        self.meteor_scores.append(meteor_score)
+
+    def _calculate_bleu(self,ori,ref):
+        BLEUscore = nltk.translate.bleu_score.sentence_bleu([ori], ref)
+        self.bleu_scores.append(BLEUscore)
+
+    def add_comparation(self,ori,ref):
+       ori_split = ori.split(" ")
+       ref_split = ref.split(" ")
+       self._calculate_bleu(ori_split,ref_split)
+       self._calculate_meteor(ori_split,ref_split)
+       self._calculate_rouge(ori,ref)
+
+    def print_summary(self):
+        print(f"Meteor Score {mean(self.meteor_scores)}")
+        print(f"Bleu Score {mean(self.bleu_scores)}")
+        print(f"Rouge-1 Score {mean(self.rouge1_scores)}")
+        print(f"Route-2 Score {mean(self.rouge2_scores)}")
+        print(f"Route-l Score {mean(self.rougel_scores)}")
+
+
+
+
+
+if __name__ == "__main__":
+
+    comparator_all = ComparatorAll()
+    comparator_all.add_comparation("hello i am polo", "hello i am lucas")
+    comparator_all.add_comparation("hello", "hello i am lucas")
+    comparator_all.print_summary()
+
+
+    #print(Comparator("oii tudo", "oii tudo").score)
