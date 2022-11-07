@@ -186,7 +186,7 @@ class Flickr8kDataset(Dataset):
         filename = os.path.join(self.download_path, "Flickr_8k.trainImages.txt")
         train = list(self.load_set(filename))
         filename_test = os.path.join(self.download_path, "Flickr_8k.testImages.txt")
-        test = list(self.load_set(filename))
+        test = list(self.load_set(filename_test))
         
         self.train_descriptions = self.load_clean_descriptions(os.path.join(self.download_path,'descriptions.txt'), train)
         self.test_descriptions = self.load_clean_descriptions(os.path.join(self.download_path,'descriptions.txt'), test)
