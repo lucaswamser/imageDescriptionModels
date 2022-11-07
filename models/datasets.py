@@ -185,8 +185,11 @@ class Flickr8kDataset(Dataset):
         self.vocabulary = self.to_vocabulary(descriptions)
         filename = os.path.join(self.download_path, "Flickr_8k.trainImages.txt")
         train = list(self.load_set(filename))
-
+        filename_test = os.path.join(self.download_path, "Flickr_8k.testImages.txt")
+        test = list(self.load_set(filename))
+        
         self.train_descriptions = self.load_clean_descriptions(os.path.join(self.download_path,'descriptions.txt'), train)
+        self.test_descriptions = self.load_clean_descriptions(os.path.join(self.download_path,'descriptions.txt'), test)
         self.descriptions = descriptions
         #print('Descriptions: train=%d' % len(train_descriptions))
         #print(list(train_descriptions)[:10])

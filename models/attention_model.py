@@ -106,6 +106,25 @@ class AttentionModel(Model):
     def train(self,dataset,steps=10,epochs=100,batch_size=1):
           self.vocab_wordtoix = dataset.vocab_wordtoix
           self.vocab_ixtoword = dataset.vocab_ixtoword
+
+          @tf.function
+          def test_step(img_tensor, target):
+            loss = 0
+            hidden = tf.zeros((target.shape[0], 512))
+            dec_input = tf.expand_dims([self.vocab_wordtoix['startseq']] * target.shape[0], 1)
+
+            with tf.GradientTape() as tape:
+              
+                for i in range(1, target.shape[1]):
+                  
+                    predictions, hidden, _ = self.keras_model([img_tensor, hidden,dec_input])
+                    loss += self.loss_function(target[:, i], predictions)
+                    dec_input = tf.expand_dims(target[:, i], 1)
+          
+            total_loss = (loss / int(target.shape[1]))  
+            return loss, total_loss  
+                
+
           @tf.function
           def train_step(img_tensor, target):
             loss = 0
@@ -133,6 +152,7 @@ class AttentionModel(Model):
           loss_plot = []
           num_steps = len(dataset.train_descriptions) // batch_size
           generator = self._data_generator(dataset.train_descriptions, dataset.encoding_train, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
+          generator_test = self._data_generator(dataset.test_descriptions, dataset.test_train, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
           #print(max_length)
           for i,g in enumerate(generator):
             if i > epochs:

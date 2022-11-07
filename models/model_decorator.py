@@ -3,7 +3,7 @@
 from base64 import encode
 import numpy as np
 import tensorflow as tf
-from models.model import Model
+from keras import Model
 from keras.applications.inception_v3 import preprocess_input
 from keras.applications.inception_v3 import InceptionV3
 
@@ -11,6 +11,7 @@ class ModelPredictDocorator(object):
 
     def __init__(self,model) -> None:
         self.model = model
+        self.load_emb_model()
 
     def preprocess(self,image_path):
         # Convert all the images to size 299x299 as expected by the inception v3 model
@@ -23,8 +24,8 @@ class ModelPredictDocorator(object):
         x = preprocess_input(x)
         return x
 
-    def encode(self,image_features_extract_model,image):
-      batch_features = image_features_extract_model( self.preprocess(image))
+    def encode(self,image):
+      batch_features = self.image_features_extract_model( self.preprocess(image))
       batch_features  = tf.reshape(batch_features,
                                   (batch_features.shape[0], -1, batch_features.shape[3]))
       return batch_features 
@@ -36,8 +37,5 @@ class ModelPredictDocorator(object):
         self.image_features_extract_model = Model(new_input, hidden_layer)
 
     def predict(self,image_path):
-        photo = self.encode(self.preprocess(self,image_path))
+        photo = self.encode(image_path)[0]
         return self.model.predict(photo)
-
-
-

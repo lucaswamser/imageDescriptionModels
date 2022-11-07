@@ -17,7 +17,7 @@ class LTSMModel(Model):
         inputs1 = tf.keras.layers.Input(shape=(64, 2048,))
 
         fe1 = tf.keras.layers.Dropout(0.5)(inputs1)
-        fe2 = tf.keras.layers.Lambda(lambda x: K.max(x, axis=1))(fe1)
+        fe2 = tf.keras.layers.Lambda(lambda x: K.mean(x, axis=1))(fe1)
 
         #fe2 = tf.keras.layers.Dropout(0.5)(fe1)
         fe3 = tf.keras.layers.Dense(256, activation='relu')(fe2)
