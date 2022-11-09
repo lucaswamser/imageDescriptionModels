@@ -33,7 +33,6 @@ class BahdanauAttention(tf.keras.layers.Layer):
 
     return context_vector, attention_weights
 
-
 class AttentionModel(Model):
 
     def __init__(self,vocab_size,max_length,embedding_dim,units=512) -> None:
@@ -149,16 +148,21 @@ class AttentionModel(Model):
 
             return loss, total_loss
 
-          loss_plot = []
+          loss_plot = [[],[]]
           num_steps = len(dataset.train_descriptions) // batch_size
           generator = self._data_generator(dataset.train_descriptions, dataset.encoding_train, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
-          generator_test = self._data_generator(dataset.test_descriptions, dataset.test_train, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
+          generator_test = self._data_generator(dataset.test_descriptions, dataset.encoding_test, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
           #print(max_length)
-          for i,g in enumerate(generator):
+          for i,(t,v) in enumerate(zip(generator,generator_test)):
             if i > epochs:
               break;
-            batch_loss, total_loss = train_step(g[0],g[1])
-            loss_plot.append(total_loss / num_steps)
+            batch_loss, total_loss = train_step(t[0],t[1])
+            loss_plot[0].append(total_loss / num_steps)
+            test_batch_loss, test_total_loss = test_step(v[0],v[1])
+            loss_plot[1].append(test_total_loss / num_steps)
+
+            #batch_loss, total_loss = train_step(t[0],t[1])
+            #loss_plot.append(total_loss / num_steps)
             
             if (i % 100 == 0):
               average_batch_loss = batch_loss.numpy()/batch_size
