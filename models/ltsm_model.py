@@ -65,7 +65,7 @@ class LTSMModel(Model):
         self.vocab_ixtoword = dataset.vocab_ixtoword
         generator = self._data_generator(dataset.train_descriptions, dataset.encoding_train, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
         generator_test = self._data_generator(dataset.test_descriptions, dataset.encoding_test, dataset.vocab_wordtoix, dataset.vocab_max_length, batch_size)
-        return self.keras_model.fit_generator(generator, epochs=epochs, steps_per_epoch=steps, verbose=1,validation_data = generator_test)
+        return self.keras_model.fit_generator(generator, epochs=epochs, steps_per_epoch=steps, verbose=1,validation_data = generator_test,validation_steps = 3)
 
 
     def predict(self,photo):
